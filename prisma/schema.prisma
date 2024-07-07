@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id          String  @id @default(uuid())
+  razao       String
+  cnpj        String  @unique
+  is_active   Boolean @default(true)
+  is_excluded Boolean @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  Users       User[]
+  Departments Department[]
+
+  @@map("companies")
+}
+
+model Department {
+  id          String @id @default(uuid())
+  description String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  is_active   Boolean @default(true)
+  is_excluded Boolean @default(false)
+
+  company    Company @relation(fields: [company_id], references: [id])
+  company_id String
+
+  User User[]
+
+  @@map("departments")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  TERMINAL
+}
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  code     Int      @unique
+  email    String?  @unique
+  password String?
+  role     UserRole @default(USER)
+  office   String
+
+  is_active   Boolean @default(true)
+  is_excluded Boolean @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  companies  Company @relation(fields: [company_id], references: [id])
+  company_id String
+
+  departments   Department @relation(fields: [department_id], references: [id])
+  department_id String
+
+  @@map("users")
+}

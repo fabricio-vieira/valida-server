@@ -1,0 +1,74 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Company {
+  id: ID!
+  razao: String!
+  cnpj: String!
+  is_active: Boolean!
+  is_excluded: Boolean!
+}
+
+type Department {
+  id: ID!
+  company_id: String!
+  description: String!
+  company: Company!
+}
+
+type User {
+  id: ID!
+  company_id: String!
+  department_id: String!
+  name: String!
+  role: UserRole!
+  code: Float!
+  email: String
+  password: String
+  office: String!
+  is_active: Boolean!
+  is_excluded: Boolean!
+  company: Company!
+  department: Department!
+}
+
+"""Describe roles for users"""
+enum UserRole {
+  ADMIN
+  USER
+  TERMINAL
+}
+
+type Query {
+  companies: [Company!]!
+  users: [User!]!
+  departments: [Department!]!
+}
+
+type Mutation {
+  createCompany(data: CreateCompanyInput!): Company!
+  createUser(data: CreateUserInput!): User!
+  createDepartment(data: CreateDepartmentInput!): Department!
+}
+
+input CreateCompanyInput {
+  razao: String!
+  cnpj: String!
+}
+
+input CreateUserInput {
+  company_id: String!
+  department_id: String!
+  name: String!
+  role: UserRole!
+  email: String
+  code: Float!
+  password: String
+  office: String!
+}
+
+input CreateDepartmentInput {
+  company_id: String!
+  description: String!
+}
